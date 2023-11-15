@@ -66,6 +66,10 @@ def play():
             elif pygame.sprite.collide_mask(bullet, adversary):
                 bullet.kill()
                 adversary.lose_health(1) 
+        
+        if pygame.sprite.collide_mask(player, adversary):
+            player.lose_health(1) 
+
 
         all_sprites.update()
         all_sprites.draw(screen)
@@ -81,8 +85,10 @@ def play():
         adversary.draw(screen)
 
         font = pygame.font.Font(None, 36)
-        text = font.render(f'Health: {adversary.health}', True, (255, 255, 255))
-        screen.blit(text, (10, 10))
+        text_hpAdersary = font.render(f'Health Adversary: {adversary.health}', True, (255, 255, 255))
+        text_hpPlayer = font.render(f'Health Player: {player.health}', True, (255, 255, 255))
+        screen.blit(text_hpAdersary, (10, 10))
+        screen.blit(text_hpPlayer, (10, 50))
 
         pygame.display.flip()
 

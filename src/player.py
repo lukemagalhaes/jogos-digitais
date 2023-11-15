@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.isJumping = False
         self.jumpCount = 10
         self.direction = "right"
+        self.health = 100
 
         self.shoot_images = [
             pygame.image.load(f'assets/player/Cowboy4_shoot_{i}.png') for i in range(4)
@@ -88,3 +89,8 @@ class Player(pygame.sprite.Sprite):
         new_bullet = Bullet(self.rect.x, self.rect.y)
         new_bullet.shoot(mouse_pos)
         self.bullets.add(new_bullet)
+
+    def lose_health(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            print('game over')

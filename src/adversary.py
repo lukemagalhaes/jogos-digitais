@@ -23,7 +23,7 @@ class Adversary(pygame.sprite.Sprite):
     def lose_health(self, damage):
         self.health -= damage
         if self.health <= 0:
-            self.reset_health()
+            print('próxima fase')
 
     def reset_health(self):
         self.health = 100
