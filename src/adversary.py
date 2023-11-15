@@ -1,14 +1,15 @@
 import pygame
 
 class Adversary(pygame.sprite.Sprite):
-    def __init__(self, x, y, speed, health=10):  # Defina um valor padrão para health
+    def __init__(self, x, y, speed, health=100):
         super().__init__()
         self.x = x
         self.y = y
         self.speed = speed
         self.health = health
-        self.image = pygame.image.load('assets/adversary/furacao.png')
+        self.image = pygame.image.load('assets/adversary/tornado.png')
         self.rect = self.image.get_rect(center=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         self.x += self.speed
@@ -22,8 +23,7 @@ class Adversary(pygame.sprite.Sprite):
     def lose_health(self, damage):
         self.health -= damage
         if self.health <= 0:
-            # Adicione aqui qualquer ação que você deseja realizar quando o adversário fica sem vida
-            self.reset_health()  # Opcional: redefinir a vida para um valor inicial
+            self.reset_health()
 
     def reset_health(self):
-        self.health = 10  # Defina o valor inicial de vida desejado
+        self.health = 100

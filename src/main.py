@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((W, H))
 pygame.display.set_caption("Menu")
 
-background = pygame.image.load('assets/background/background4.jpg')
+background = pygame.image.load('assets/background/level1.jpg')
 
 def get_font(size):
     return pygame.font.Font("assets/menu/font.ttf", size)
@@ -23,11 +23,11 @@ all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 player = Player(50, 530, bullets)
-adversary = Adversary(W // 2 + 300, H // 2 + 130, 3)
-adversary.image = pygame.transform.scale(adversary.image, (200, 350))
+adversary = Adversary( 350, 415, 3)
+adversary.image = pygame.transform.scale(adversary.image, (350, 350))
 all_sprites.add(player, adversary)
 
-shoot_delay = 300
+shoot_delay = 3
 last_shoot_time = pygame.time.get_ticks()
 
 def play():
@@ -58,16 +58,14 @@ def play():
         player.move(keys_pressed)
         player.jump()
 
-        # Atualize a posição do adversário
         adversary.move()
 
-        # Dentro do loop play()
         for bullet in bullets:
             if not (0 <= bullet.rect.x <= W and 0 <= bullet.rect.y <= H):
                 bullet.kill()
-            elif pygame.sprite.collide_rect(adversary, bullet):
+            elif pygame.sprite.collide_mask(bullet, adversary):
                 bullet.kill()
-                adversary.lose_health(10)  # 10 é um exemplo, ajuste conforme necessário
+                adversary.lose_health(1) 
 
         all_sprites.update()
         all_sprites.draw(screen)
@@ -80,10 +78,8 @@ def play():
 
         bullets.draw(screen)
 
-        # Desenhe o adversário
         adversary.draw(screen)
 
-        # Exibir a vida do adversário na tela
         font = pygame.font.Font(None, 36)
         text = font.render(f'Health: {adversary.health}', True, (255, 255, 255))
         screen.blit(text, (10, 10))

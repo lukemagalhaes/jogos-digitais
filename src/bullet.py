@@ -12,7 +12,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (7, 7))
         self.direction = (0, 0)
         self.state = "ready"
-
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
 
     def update(self):
