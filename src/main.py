@@ -35,7 +35,7 @@ def play():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running_game = False
-            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_UP or event.key == pygame.K_SPACE):
+            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_UP or event.key == pygame.K_SPACE or event.key == pygame.K_w ) :
                 player.isJumping = True
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 current_time = pygame.time.get_ticks()

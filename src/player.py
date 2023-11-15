@@ -61,11 +61,11 @@ class Player(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.image, True, False)
 
     def move(self, keys_pressed):
-        if keys_pressed[pygame.K_RIGHT]:
+        if keys_pressed[pygame.K_RIGHT] or keys_pressed[pygame.K_d] : 
             if self.rect.x + 5 < 720 - 35:
                 self.rect.x += 5
                 self.direction = "right"
-        if keys_pressed[pygame.K_LEFT]:
+        if keys_pressed[pygame.K_LEFT] or keys_pressed[pygame.K_a] :
             if self.rect.x - 0 > -5:
                 self.rect.x -= 5
                 self.direction = "left"
