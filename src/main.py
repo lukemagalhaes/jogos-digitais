@@ -106,6 +106,42 @@ def resume_game():
     global paused
     paused = False
 
+def game_over():
+    global score
+    running_game_over = True
+
+    while running_game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_RETURN:
+                    score = 0 
+                    player.reset()  
+                    
+                    main_menu() 
+
+        screen.fill((0, 0, 0))  
+
+        game_over_font = get_font(60)
+        game_over_text = game_over_font.render("Game Over", True, (255, 0, 0))
+        game_over_rect = game_over_text.get_rect(center=(W // 2, H // 2 - 50))
+        screen.blit(game_over_text, game_over_rect)
+
+        score_font = get_font(40)
+        score_text = score_font.render(f'Score: {score}', True, (255, 255, 255))
+        score_rect = score_text.get_rect(center=(W // 2, H // 2 + 50))
+        screen.blit(score_text, score_rect)
+
+        press_enter_text = get_font(15).render("Pressione Enter para retornar ao menu principal", True, (255, 255, 255))
+        press_enter_rect = press_enter_text.get_rect(center=(W // 2, H - 50))
+        screen.blit(press_enter_text, press_enter_rect)
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 def create_pause_menu_buttons():
     global pause_menu_buttons
 
@@ -168,7 +204,7 @@ def play_next_phase():
         adversary = Adversary(400, 495, 7, 100)
         adversary.image = pygame.image.load('assets/adversary/furacao.png')
         adversary.image = pygame.transform.scale(adversary.image, (263, 365))
-        adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+        adversarys.add(adversary)  
     elif current_phase == 2:
         background = pygame.image.load('assets/background/level3.jpg')
         adversarys.remove(adversary)
@@ -177,7 +213,7 @@ def play_next_phase():
         adversary = Adversary(400, 496, 10, 100)
         adversary.image = pygame.image.load('assets/adversary/tufao.png')
         adversary.image = pygame.transform.scale(adversary.image, (328, 417))
-        adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+        adversarys.add(adversary)  
 
 def play():
     global last_shoot_time, score, pause_menu_buttons, paused
@@ -258,8 +294,13 @@ def play():
             screen.blit(player_health_bar.image, player_health_bar.rect)
             screen.blit(adversary_health_bar.image, adversary_health_bar.rect)
 
+            if player.health <= 0:
+                game_over()
+                return False
+        
             show_score() 
             pygame.display.flip()
+            
 
 def main_menu():
     global last_shoot_time
@@ -296,6 +337,7 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     PLAY_BUTTON.action()
+                    play()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     QUIT_BUTTON.action()
         pygame.display.update()

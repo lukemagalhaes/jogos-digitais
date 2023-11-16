@@ -100,3 +100,17 @@ class Player(pygame.sprite.Sprite):
 
     def fall(self, y):
         self.rect.y = y
+
+    def reset(self):
+        self.current_frame = 0
+        self.isJumping = False
+        self.jumpCount = 10
+        self.direction = "right"
+        self.health = 100
+        self.shoot_index = 0
+        self.isShooting = False
+        self.jump_shoot_index = 0
+        self.is_jump_shooting = False
+
+        self.rect.x = 50
+        self.rect.y = 530

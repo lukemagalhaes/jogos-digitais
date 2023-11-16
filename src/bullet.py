@@ -20,7 +20,6 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.x += self.direction[0] * self.speed
             self.rect.y += self.direction[1] * self.speed
 
-            # Verificar se a bala está fora dos limites
             if self.rect.left > W or self.rect.right < 0 or self.rect.top > H or self.rect.bottom < 0:
                 self.state = "ready"
 
