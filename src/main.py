@@ -2,6 +2,7 @@ import pygame
 import sys
 from pygame.locals import *
 from bullet import Bullet
+from healthBar import HealthBar
 from menu import Button
 from player import Player
 from adversary import Adversary
@@ -27,9 +28,14 @@ adversarys = pygame.sprite.Group()
 player = Player(50, 530, bullets)
 players.add(player)
 
-adversary = Adversary(350, 415, 3, 1)
+adversary = Adversary(350, 415, 3, 100)
 adversary.image = pygame.transform.scale(adversary.image, (350, 350))
 adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+
+player_health_bar = HealthBar(10, 10, 200, 20, 100, is_player=True)
+adversary_health_bar = HealthBar(W - 210, 10, 200, 20, 100, is_player=False)
+
+
 
 shoot_delay = 3
 last_shoot_time = pygame.time.get_ticks()
@@ -39,6 +45,7 @@ score = 0
 paused = False
 pause_menu_buttons = []
 sound_enabled = True
+sound_text = "on"
 
 def initialize_sound():
     pygame.mixer.init()
@@ -90,11 +97,15 @@ def show_instructions():
 
 def toggle_sound():
     global sound_enabled
+    global sound_text
     if sound_enabled:
         pygame.mixer.music.stop()
+        sound_text = "off"
     else:
         pygame.mixer.music.play(-1)  
+        sound_text = "on"
     sound_enabled = not sound_enabled
+    create_pause_menu_buttons()
 
 def resume_game():
     global paused
@@ -107,14 +118,14 @@ def create_pause_menu_buttons():
     instructions_button_image = pygame.image.load("assets/menu/Play Rect.png")
     resume_button_image = pygame.image.load("assets/menu/Play Rect.png")
 
-    new_button_size = (300, 75)
+    new_button_size = (345, 75)
     instruction_button_size = (450, 75)
     sound_button_image = pygame.transform.scale(sound_button_image, new_button_size)
     instructions_button_image = pygame.transform.scale(instructions_button_image, instruction_button_size)
     resume_button_image = pygame.transform.scale(resume_button_image, new_button_size)
 
     SOUND_BUTTON = Button(image=sound_button_image, pos=(360, 250),
-                         text_input="Sound", font=get_font(35), base_color="#d7fcd4", hovering_color="White",
+                         text_input=f"Sound {sound_text}", font=get_font(35), base_color="#d7fcd4", hovering_color="White",
                          action=toggle_sound)
     INSTRUCTIONS_BUTTON = Button(image=instructions_button_image, pos=(360, 350),
                                 text_input="Instructions", font=get_font(35), base_color="#d7fcd4",
@@ -153,26 +164,24 @@ def show_pause_menu():
 def play_next_phase():
     global current_phase, background, adversary
 
-    # Adicione pontos ao passar para a próxima fase
-    global score
-    score += 10  # Ajuste conforme necessário
-
     if current_phase == 1:
         background = pygame.image.load('assets/background/level2.jpg')
         current_phase += 1
         adversarys.remove(adversary)
         player.fall(630)
-        adversary = Adversary(350, 305, 10, 1)
+        player.health = 100
+        adversary = Adversary(400, 495, 7, 100)
         adversary.image = pygame.image.load('assets/adversary/furacao.png')
-        adversary.image = pygame.transform.scale(adversary.image, (550, 550))
+        adversary.image = pygame.transform.scale(adversary.image, (263, 365))
         adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
     elif current_phase == 2:
         background = pygame.image.load('assets/background/level3.jpg')
         adversarys.remove(adversary)
         player.fall(650)
-        adversary = Adversary(350, 305, 10, 1)
+        player.health = 100
+        adversary = Adversary(400, 496, 10, 100)
         adversary.image = pygame.image.load('assets/adversary/tufao.png')
-        adversary.image = pygame.transform.scale(adversary.image, (160, 600))
+        adversary.image = pygame.transform.scale(adversary.image, (328, 417))
         adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
 
 def play():
@@ -202,6 +211,12 @@ def play():
                     new_bullet.shoot(mouse_pos)
                     bullets.add(new_bullet)
                     last_shoot_time = current_time
+        player_health_bar.update(player.health)
+        adversary_health_bar.update(adversary.health)
+        screen.blit(player_health_bar.image, player_health_bar.rect)
+        screen.blit(adversary_health_bar.image, adversary_health_bar.rect)
+
+
 
         if paused:
             show_pause_menu()
@@ -225,6 +240,8 @@ def play():
                 elif pygame.sprite.collide_mask(bullet, adversary):
                     bullet.kill()
                     adversary.lose_health(1)
+                    global score
+                    score += 1
 
             if pygame.sprite.collide_mask(player, adversary):
                 player.lose_health(1)
@@ -240,16 +257,11 @@ def play():
 
             bullets.draw(screen)
 
-            adversarys.draw(screen)  # Desenhe a partir do grupo 'adversarys'
+            adversarys.draw(screen)
+            screen.blit(player_health_bar.image, player_health_bar.rect)
+            screen.blit(adversary_health_bar.image, adversary_health_bar.rect)
 
-            font = pygame.font.Font(None, 36)
-            text_hpAdversary = font.render(f'Health Adversary: {adversary.health}', True, (255, 255, 255))
-            text_hpPlayer = font.render(f'Health Player: {player.health}', True, (255, 255, 255))
-            text_score = font.render(f'Score: {score}', True, (255, 255, 255))
-            screen.blit(text_hpAdversary, (10, 10))
-            screen.blit(text_hpPlayer, (10, 50))
-            screen.blit(text_score, (10, 90))
-
+            show_score() 
             pygame.display.flip()
 
 def main_menu():
@@ -290,6 +302,12 @@ def main_menu():
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     QUIT_BUTTON.action()
         pygame.display.update()
+
+def show_score():
+    score_font = get_font(28)
+    score_text = score_font.render(f'Score: {score}', True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(W // 2, 22))
+    screen.blit(score_text, score_rect)
 
 if __name__ == "__main__":
     main_menu()

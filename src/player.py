@@ -1,5 +1,5 @@
 import pygame
-from bullet import Bullet  # Certifique-se de ajustar o nome do arquivo conforme necessário
+from bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, bullets):
@@ -14,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.jumpCount = 10
         self.direction = "right"
         self.health = 100
+        self.shoot_sound = pygame.mixer.Sound("assets/sounds/fire.wav")
 
         self.shoot_images = [
             pygame.image.load(f'assets/player/Cowboy4_shoot_{i}.png') for i in range(4)
@@ -64,13 +65,12 @@ class Player(pygame.sprite.Sprite):
             if self.direction == "left":
                 self.image = pygame.transform.flip(self.image, True, False)
 
-
     def move(self, keys_pressed):
-        if keys_pressed[pygame.K_RIGHT] or keys_pressed[pygame.K_d] : 
+        if keys_pressed[pygame.K_RIGHT] or keys_pressed[pygame.K_d]:
             if self.rect.x + 5 < 720 - 35:
                 self.rect.x += 5
                 self.direction = "right"
-        if keys_pressed[pygame.K_LEFT] or keys_pressed[pygame.K_a] :
+        if keys_pressed[pygame.K_LEFT] or keys_pressed[pygame.K_a]:
             if self.rect.x - 0 > -5:
                 self.rect.x -= 5
                 self.direction = "left"
@@ -87,13 +87,13 @@ class Player(pygame.sprite.Sprite):
                 self.isJumping = False
                 self.jumpCount = 10
 
-
     def shoot(self, mouse_pos):
         self.isShooting = True
         self.shoot_index = 0
         new_bullet = Bullet(self.rect.x, self.rect.y)
         new_bullet.shoot(mouse_pos)
         self.bullets.add(new_bullet)
+        self.shoot_sound.play()
 
     def lose_health(self, damage):
         self.health -= damage
