@@ -9,7 +9,7 @@ from adversary import Adversary
 
 W, H = 720, 720
 FPS = 60
-current_phase = 1  # Inicializa a fase atual
+current_phase = 1 
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -30,17 +30,14 @@ players.add(player)
 
 adversary = Adversary(350, 415, 3, 100)
 adversary.image = pygame.transform.scale(adversary.image, (350, 350))
-adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+adversarys.add(adversary)
 
-player_health_bar = HealthBar(10, 10, 200, 20, 100, is_player=True)
-adversary_health_bar = HealthBar(W - 210, 10, 200, 20, 100, is_player=False)
+player_health_bar = HealthBar(10, 15, 200, 20, 100, is_player=True)
+adversary_health_bar = HealthBar(W - 210, 15, 200, 20, 100, is_player=False)
 
-
-
-shoot_delay = 3
+shoot_delay = 300
 last_shoot_time = pygame.time.get_ticks()
 
-# Adicione uma variável global para a pontuação
 score = 0
 paused = False
 pause_menu_buttons = []
@@ -50,8 +47,10 @@ sound_text = "on"
 def initialize_sound():
     pygame.mixer.init()
     pygame.mixer.music.load("assets/sounds/heroesTheme.wav")
-    pygame.mixer.music.set_volume(0.5)  # Defina o volume inicial desejado
-    pygame.mixer.music.play(-1)  # -1 para reprodução em loop
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+
+shoot_sound = pygame.mixer.Sound("assets/sounds/fire.wav")
 
 initialize_sound()
 
@@ -69,10 +68,8 @@ def show_instructions():
 
     font = get_font(20)
     
-    # Separe o texto em linhas
     lines = instructions_text.split('\n')
 
-    # Calcule a altura total ocupada pelo bloco de texto
     total_height = len(lines) * font.get_height()
 
     while paused:
@@ -83,10 +80,8 @@ def show_instructions():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 paused = False
 
-        # Limpe a tela
         screen.fill((30, 90, 120))
 
-        # Renderize cada linha individualmente
         for i, line in enumerate(lines):
             line_surface = font.render(line, True, (255, 255, 255))
             line_rect = line_surface.get_rect(center=(W // 2, (H - total_height) // 2 + i * font.get_height()))
@@ -206,6 +201,8 @@ def play():
                 current_time = pygame.time.get_ticks()
                 if current_time - last_shoot_time > shoot_delay:
                     player.isShooting = True
+                    shoot_sound.set_volume(1)
+                    shoot_sound.play(1)
                     new_bullet = Bullet(player.rect.x, player.rect.y)
                     mouse_pos = pygame.mouse.get_pos()
                     new_bullet.shoot(mouse_pos)
@@ -306,7 +303,7 @@ def main_menu():
 def show_score():
     score_font = get_font(28)
     score_text = score_font.render(f'Score: {score}', True, (255, 255, 255))
-    score_rect = score_text.get_rect(center=(W // 2, 22))
+    score_rect = score_text.get_rect(center=(W // 2, 25))
     screen.blit(score_text, score_rect)
 
 if __name__ == "__main__":

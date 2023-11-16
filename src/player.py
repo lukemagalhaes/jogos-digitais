@@ -14,7 +14,6 @@ class Player(pygame.sprite.Sprite):
         self.jumpCount = 10
         self.direction = "right"
         self.health = 100
-        self.shoot_sound = pygame.mixer.Sound("assets/sounds/fire.wav")
 
         self.shoot_images = [
             pygame.image.load(f'assets/player/Cowboy4_shoot_{i}.png') for i in range(4)
@@ -93,7 +92,6 @@ class Player(pygame.sprite.Sprite):
         new_bullet = Bullet(self.rect.x, self.rect.y)
         new_bullet.shoot(mouse_pos)
         self.bullets.add(new_bullet)
-        self.shoot_sound.play()
 
     def lose_health(self, damage):
         self.health -= damage
