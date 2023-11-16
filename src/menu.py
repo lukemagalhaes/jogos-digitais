@@ -1,9 +1,10 @@
 class Button():
-    def __init__(self, image, pos, text_input, font, base_color, hovering_color, action=None):
+    def __init__(self, image, pos, text_input, font, base_color, hovering_color, action, input_name=None):
         self.image = image
         self.x_pos = pos[0]
         self.y_pos = pos[1]
         self.font = font
+        self.input_name = input_name
         self.base_color, self.hovering_color = base_color, hovering_color
         self.text_input = text_input
         self.text = self.font.render(self.text_input, True, self.base_color)
@@ -28,3 +29,8 @@ class Button():
             self.text = self.font.render(self.text_input, True, self.hovering_color)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
+
+    def action(self):
+        if self.input_name:
+            self.input_name()
+        self.action()

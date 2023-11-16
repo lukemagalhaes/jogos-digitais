@@ -99,7 +99,9 @@ class Player(pygame.sprite.Sprite):
             print('game over')
 
     def fall(self, y):
+        print(self.rect.y)
         self.rect.y = y
+        print(self.rect.y)
 
     def reset(self):
         self.current_frame = 0
@@ -111,6 +113,3 @@ class Player(pygame.sprite.Sprite):
         self.isShooting = False
         self.jump_shoot_index = 0
         self.is_jump_shooting = False
-
-        self.rect.x = 50
-        self.rect.y = 530
