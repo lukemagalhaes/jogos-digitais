@@ -198,7 +198,21 @@ def show_pause_menu():
         button.changeColor(MENU_MOUSE_POS)
         button.update(screen)
 
-    pygame.display.update() 
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for button in pause_menu_buttons:
+                    if button.rect.collidepoint(event.pos):
+                        button.action()
+                        return
+
+        clock.tick(FPS)
+
 
 def play_next_phase():
     global current_phase, background, adversary, score
