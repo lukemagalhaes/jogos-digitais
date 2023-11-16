@@ -52,7 +52,10 @@ class Player(pygame.sprite.Sprite):
             if self.shoot_index == 0:
                 self.isShooting = False
         elif self.isJumping:
-            self.image = self.jump_image
+            if self.direction == "left":
+                self.image = pygame.transform.flip(self.jump_image, True, False)
+            else:
+                self.image = self.jump_image
         else:
             frame_x = self.current_frame * self.frame_width
             self.image = self.spritesheet.subsurface(
@@ -60,6 +63,7 @@ class Player(pygame.sprite.Sprite):
             )
             if self.direction == "left":
                 self.image = pygame.transform.flip(self.image, True, False)
+
 
     def move(self, keys_pressed):
         if keys_pressed[pygame.K_RIGHT] or keys_pressed[pygame.K_d] : 
@@ -77,11 +81,12 @@ class Player(pygame.sprite.Sprite):
                 neg = 1
                 if self.jumpCount < 0:
                     neg = -1
-                self.rect.y -= self.jumpCount ** 2 * 0.1 * neg
+                self.rect.y -= int(self.jumpCount ** 2 * 0.05 * neg)
                 self.jumpCount -= 1
             else:
                 self.isJumping = False
                 self.jumpCount = 10
+
 
     def shoot(self, mouse_pos):
         self.isShooting = True

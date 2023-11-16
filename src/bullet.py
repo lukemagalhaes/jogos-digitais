@@ -9,7 +9,7 @@ class Bullet(pygame.sprite.Sprite):
         self.y = y
         self.speed = 5
         self.image = pygame.image.load('assets/bullet/bullet.png')
-        self.image = pygame.transform.scale(self.image, (14, 14))
+        self.image = pygame.transform.scale(self.image, (10, 10))
         self.direction = (0, 0)
         self.state = "ready"
         self.mask = pygame.mask.from_surface(self.image)
