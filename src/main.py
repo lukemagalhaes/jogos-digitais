@@ -8,6 +8,7 @@ from adversary import Adversary
 
 W, H = 720, 720
 FPS = 60
+current_phase = 1  # Inicializa a fase atual
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -19,20 +20,45 @@ background = pygame.image.load('assets/background/level1.jpg')
 def get_font(size):
     return pygame.font.Font("assets/menu/font.ttf", size)
 
-all_sprites = pygame.sprite.Group()
+players = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+adversarys = pygame.sprite.Group()
 
 player = Player(50, 530, bullets)
-adversary = Adversary( 350, 415, 3)
+players.add(player)
+
+adversary = Adversary(350, 415, 3, 1)
 adversary.image = pygame.transform.scale(adversary.image, (350, 350))
-all_sprites.add(player, adversary)
+adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
 
 shoot_delay = 3
 last_shoot_time = pygame.time.get_ticks()
 
+def play_next_phase():
+    global current_phase, background, adversary
+
+    if current_phase == 1:
+        background = pygame.image.load('assets/background/level2.jpg')
+        current_phase += 1
+        adversarys.remove(adversary)
+        player.fall(630)
+        adversary = Adversary(350, 305, 10, 1)
+        adversary.image = pygame.image.load('assets/adversary/furacao.png')
+        adversary.image = pygame.transform.scale(adversary.image, (550, 550))
+        adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+    elif current_phase == 2:
+        background = pygame.image.load('assets/background/level3.jpg')
+        adversarys.remove(adversary)
+        player.fall(650)
+        adversary = Adversary(350, 305, 10, 1)
+        adversary.image = pygame.image.load('assets/adversary/tufao.png')
+        adversary.image = pygame.transform.scale(adversary.image, (160, 600))
+        adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
+    
 def play():
     global last_shoot_time
     running_game = True
+
     while running_game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -50,6 +76,8 @@ def play():
                     last_shoot_time = current_time
 
         keys_pressed = pygame.key.get_pressed()
+        if adversary.health <= 0:
+            play_next_phase()
 
         clock.tick(FPS)
         screen.fill((30, 90, 120))
@@ -65,14 +93,13 @@ def play():
                 bullet.kill()
             elif pygame.sprite.collide_mask(bullet, adversary):
                 bullet.kill()
-                adversary.lose_health(1) 
-        
+                adversary.lose_health(1)
+
         if pygame.sprite.collide_mask(player, adversary):
-            player.lose_health(1) 
+            player.lose_health(1)
 
-
-        all_sprites.update()
-        all_sprites.draw(screen)
+        players.update()
+        players.draw(screen)
 
         bullets.update()
 
@@ -82,12 +109,12 @@ def play():
 
         bullets.draw(screen)
 
-        adversary.draw(screen)
+        adversarys.draw(screen)  # Desenhe a partir do grupo 'adversarys'
 
         font = pygame.font.Font(None, 36)
-        text_hpAdersary = font.render(f'Health Adversary: {adversary.health}', True, (255, 255, 255))
+        text_hpAdversary = font.render(f'Health Adversary: {adversary.health}', True, (255, 255, 255))
         text_hpPlayer = font.render(f'Health Player: {player.health}', True, (255, 255, 255))
-        screen.blit(text_hpAdersary, (10, 10))
+        screen.blit(text_hpAdversary, (10, 10))
         screen.blit(text_hpPlayer, (10, 50))
 
         pygame.display.flip()
@@ -129,7 +156,6 @@ def main_menu():
                     PLAY_BUTTON.action()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     QUIT_BUTTON.action()
-
         pygame.display.update()
 
 if __name__ == "__main__":

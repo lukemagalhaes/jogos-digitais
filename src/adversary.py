@@ -1,7 +1,7 @@
 import pygame
 
 class Adversary(pygame.sprite.Sprite):
-    def __init__(self, x, y, speed, health=100):
+    def __init__(self, x, y, speed, health):
         super().__init__()
         self.x = x
         self.y = y

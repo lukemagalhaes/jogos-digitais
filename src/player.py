@@ -94,3 +94,6 @@ class Player(pygame.sprite.Sprite):
         self.health -= damage
         if self.health <= 0:
             print('game over')
+
+    def fall(self, y):
+        self.rect.y = y
