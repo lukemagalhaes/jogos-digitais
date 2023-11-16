@@ -34,8 +34,15 @@ adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
 shoot_delay = 3
 last_shoot_time = pygame.time.get_ticks()
 
+# Adicione uma variável global para a pontuação
+score = 0
+
 def play_next_phase():
     global current_phase, background, adversary
+
+    # Adicione pontos ao passar para a próxima fase
+    global score
+    score += 10  # Ajuste conforme necessário
 
     if current_phase == 1:
         background = pygame.image.load('assets/background/level2.jpg')
@@ -54,9 +61,9 @@ def play_next_phase():
         adversary.image = pygame.image.load('assets/adversary/tufao.png')
         adversary.image = pygame.transform.scale(adversary.image, (160, 600))
         adversarys.add(adversary)  # Adicione ao grupo 'adversarys'
-    
+
 def play():
-    global last_shoot_time
+    global last_shoot_time, score
     running_game = True
 
     while running_game:
@@ -114,8 +121,10 @@ def play():
         font = pygame.font.Font(None, 36)
         text_hpAdversary = font.render(f'Health Adversary: {adversary.health}', True, (255, 255, 255))
         text_hpPlayer = font.render(f'Health Player: {player.health}', True, (255, 255, 255))
+        text_score = font.render(f'Score: {score}', True, (255, 255, 255))
         screen.blit(text_hpAdversary, (10, 10))
         screen.blit(text_hpPlayer, (10, 50))
+        screen.blit(text_score, (10, 90))
 
         pygame.display.flip()
 
